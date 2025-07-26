@@ -31,17 +31,15 @@ jobs:
                   script: |
                       cd ~/lms-prog-academy-lesson9-10-dz-docker
 
-                      # Очистка старой резервной копии
                       if [ -d "www__" ]; then rm -rf www__; fi
 
-                      # Сохраняем текущую версию как резервную
                       if [ -d "www" ]; then mv www www__; fi
 
-                      # Активируем новую
                       if [ -d "www_" ]; then mv www_ www; else echo "❌ Ошибка: www_ не найдена"; exit 1; fi
 
-                      # Пересборка и запуск контейнера
+                      echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env
+                      sed -i 's/__CHENGED_PASSWORD__/${{ secrets.DB_PASSWORD }}/' www/.env
+
                       docker compose up -d --build
 
-                      # Установка PHP-зависимостей (замени имя контейнера при необходимости)
                       docker compose exec -T -w /app php composer install || true
